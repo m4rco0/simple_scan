@@ -1,5 +1,6 @@
-#Simple Scan
--[X] Scan portas abertas
--[ ] Colocar argparse
--[ ] Detectar serviços
--[ ] Detectar Sistema operacional
+# Simple Scan.  
+- [X] Verificar as portas abertas e fechadas em cada endereço IP.  
+- [ ] argumentos no comando.  
+- [ ] Identificar os serviços em execução em cada porta aberta.  
+- [ ] Verificar se há vulnerabilidades conhecidas nos serviços em execução.  
+
