@@ -1,5 +1,5 @@
 #Simple Scan
--[x] Scan portas abertas
--[] Colocar argparse
--[] Detectar serviços
--[] Detectar Sistema operacional
+-[X] Scan portas abertas
+-[ ] Colocar argparse
+-[ ] Detectar serviços
+-[ ] Detectar Sistema operacional
