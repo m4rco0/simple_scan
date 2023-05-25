@@ -1,4 +1,5 @@
 import socket
+import sys
 
 GREEN = "\033[32m"
 WHITE = '\033[0m'
@@ -25,23 +26,42 @@ def conexao(ip, start_port, end_port, tipo):
     return "\nScan Finalizado!"
 
 
-art = banner()
+if __name__ == '__main__':
+    if len(sys.argv) == 3:
+        ip = sys.argv[1]
+        port = sys.argv[2]
 
-print(GREEN + art + END)
+        if '-' in port:  # Verifica se o usuário informou um range de portas ou apenas uma porta
+            port = port.split('-')
 
-# print(WHITE +"\nInforme o tipo de conexão que tu vai querer:")
-# print("Opções:")
-# print("TCP")
+        tipo = "TCP"
 
-tipo = "TCP"
+        art = banner()
+        print(GREEN + art + END)
+        print()
 
-# tipo = input("Conexão desejada: ")
-if tipo == "TCP":
-    print("\nInforme o IP e o RANGE de portas: \t Ex: 192.168.0.1 21-8080")
-    ip, port = input().split()
+        if len(port) > 1:  # Verifica se o usuário informou um range de portas ou apenas uma porta
+            print(conexao(ip, int(port[0]), int(port[1]), tipo))
+        else:
+            print(conexao(ip, int(port), int(port), tipo))
 
-    if len(port) > 1:  # Verifica se o usuário informou um range de portas ou apenas uma porta
-        port = port.split('-')
-        print(conexao(ip, int(port[0]), int(port[1]), tipo))
     else:
-        print(conexao(ip, int(port), int(port), tipo))
+        art = banner()
+        print(GREEN + art + END)
+
+        # print(WHITE +"\nInforme o tipo de conexão que tu vai querer:")
+        # print("Opções:")
+        # print("TCP")
+
+        tipo = "TCP"
+
+        # tipo = input("Conexão desejada: ")
+        if tipo == "TCP":
+            print("\nInforme o IP e o RANGE de portas: \t Ex: 192.168.0.1 21-8080")
+            ip, port = input().split()
+
+            if '-' in port:  # Verifica se o usuário informou um range de portas ou apenas uma porta
+                port = port.split('-')
+                print(conexao(ip, int(port[0]), int(port[1]), tipo))
+            else:
+                print(conexao(ip, int(port), int(port), tipo))
