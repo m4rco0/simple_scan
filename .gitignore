@@ -1,0 +1,9 @@
+#Arquivos de teste
+test.py
+
+#Ambiente virtual
+venv
+
+#IDEs
+.idea
+.vscode
