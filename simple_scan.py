@@ -49,7 +49,7 @@ if __name__ == '__main__':
         art = banner()
         print(GREEN + art + END)
 
-        # print(WHITE +"\nInforme o tipo de conexão que tu vai querer:")
+        # print("\nInforme o tipo de conexão que tu vai querer:")
         # print("Opções:")
         # print("TCP")
 
