@@ -21,7 +21,8 @@ def conexao(ip, start_port, end_port, tipo):
             tcp.settimeout(1)
             resultado = tcp.connect_ex((ip, porta))
             if resultado == 0:
-                print(GREEN + f"Porta: {porta} ABERTA" + END)
+                servico = socket.getservbyport(porta)
+                print(GREEN + f"Porta: {porta} ABERTA  \tServiço: {servico}" + END)
                 tcp.close()
     return "\nScan Finalizado!"
 

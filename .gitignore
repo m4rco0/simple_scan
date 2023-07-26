@@ -1,6 +1,6 @@
 #Arquivos de teste
 test.py
-
+*.[oa]
 #Ambiente virtual
 venv
 
