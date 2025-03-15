@@ -14,7 +14,9 @@ Você pode usar a ferramenta de duas maneiras:
 python3 simple_scan.py
 ```
 Esta é a maneira mais simples de usar a ferramenta, um modo interativo.
-
+<div aling= "center">
+  <img src="https://github.com/m4rco0/simple_scan/assets/54968908/52aa130f-518d-4cd3-b409-7a613269d7fc" width= "800px">
+</div>
 ### 2. Executando o arquivo `main.py` com argumentos
 Exemplo:
 ```bash
@@ -29,6 +31,4 @@ Só precisa executar o codigo no src
 ```bash
 python3 simple_scan_ui.py 
 ```
-<div aling= "center">
-  <img src="https://github.com/m4rco0/simple_scan/assets/54968908/52aa130f-518d-4cd3-b409-7a613269d7fc" width= "800px">
-</div>
+
