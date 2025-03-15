@@ -15,6 +15,7 @@ def main():
                       )
     parser.add_argument("ip", help="Ip do host que vai ser escaneado")
     parser.add_argument("-p", "--ports", help="Utilize o range de portas que vai buscar 0-80 ou apenas uma porta 80")
+    parser.add_argument("-t", "--threads", help="Utilize para mudar a quantida de threads utilizado na busca")
     args =parser.parse_args()
 
     banner()
@@ -22,6 +23,7 @@ def main():
     ip = args.ip
     startPort = 0
     endPort = 80
+    threads = 50
     """ Testando se precisa scanear 1 porta ou um range de portas"""
     if args.ports != None:
         if len(args.ports.split("-")) == 1:
@@ -35,10 +37,14 @@ def main():
             print(RED + "[-] ERRO NA FORMATAÇÃO DO RANGE DE PORTAS")
             return
 
+    if args.threads != None:
+        threads = int(args.threads)
+
+    print(threads)
     """ utilizando o scanner"""
-    scan = scanner.Scanner(ip, startPort, endPort)
+    scan = scanner.Scanner(ip, startPort, endPort, threads)
     scan.scannear()
-    fila = scan.limparfila()
+    fila = scan.getfila()
 
     while not fila.empty():
         print(fila.get())

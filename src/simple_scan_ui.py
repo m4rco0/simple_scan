@@ -35,6 +35,8 @@ class ScannApp:
       self.lbl_ports = tk.Label(frame, text="Portas: ")
       self.inp_init_port = tk.Entry(frame)
       self.inp_end_port = tk.Entry(frame)
+      self.lbl_threads = tk.Label(frame, text="Threads:")
+      self.qts_threads = tk.Entry(frame)
 
       """ espaçamentos da interface grafica, estruturada usando grid, sendo cada linha e coluna um componten"""
       self.lbl_host.grid(row=0, column=0)
@@ -44,9 +46,11 @@ class ScannApp:
       self.lbl_ports.grid(row=1, column=0)
       self.inp_init_port.grid(row=1, column=1)
       self.inp_end_port.grid(row=1, column=2)
+      self.lbl_threads.grid(row=2, column=0)
+      self.qts_threads.grid(row=2, column=1)
 
       """ Inicializando o scanner como nulo"""
-      self.scanner = scanner.Scanner('0.0.0.0', 0, 0)
+      self.scanner = scanner.Scanner('0.0.0.0', 0, 0, 50)
 
 
    """ =================Metodos=================
@@ -57,21 +61,22 @@ class ScannApp:
       target = self.txt_host.get().strip()
       init_port = self.inp_init_port.get().strip()
       end_port = self.inp_end_port.get().strip()
-
+      qts_threads = self.qts_threads.get().strip()
       if not target:
          self.log("Traget nao setado")
          return
       if (not init_port or not end_port):
          self.log("Portas não setadas")
          return
+      if len(qts_threads) != 0:
+         qts_threads = int(qts_threads)
       init_port = int(init_port)
       end_port = int(end_port)
 
-
-      print("testes dos inputs")
       self.scanner.set_target(target)
       self.scanner.set_initial_port(init_port)
       self.scanner.set_end_port(end_port)
+      self.scanner.set_qts_threads(qts_threads)
 
       thread = threading.Thread(target=self.executar_scan)
       thread.start()
@@ -80,8 +85,8 @@ class ScannApp:
    def executar_scan(self):
 
       self.scanner.scannear()
-      fila = self.scanner.limparfila()
-
+      self.log(f"alvo {self.scanner.get_target()}:")
+      fila = self.scanner.getfila()
       while not fila.empty():
          self.log(fila.get())
          fila.task_done()
