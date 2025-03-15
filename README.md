@@ -31,4 +31,5 @@ Só precisa executar o codigo no src
 ```bash
 python3 simple_scan_ui.py 
 ```
+![Image](https://github.com/user-attachments/assets/b8b4ea0e-db4b-46d1-b123-431291cecaed)
 
