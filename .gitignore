@@ -3,7 +3,8 @@ test.py
 *.[oa]
 #Ambiente virtual
 venv
-
+__pycache__
+*.log
 #IDEs
 .idea
 .vscode
