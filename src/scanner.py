@@ -1,12 +1,15 @@
 import socket
+import threading
 from colors import *
+import queue
 """ Construtor de um scanner"""
 class Scanner:
     def __init__(self, target, portaInicia, portaFinal):
         self.target = target
         self.portaInicia = portaInicia
         self.portaFinal = portaFinal
-    
+        self.fila = queue.Queue()
+
     """ 
     função que executar o scan dos alvos até as portas determinadasd
     percorre de porta_inicial até porta final de forma linear O(n)
@@ -14,24 +17,33 @@ class Scanner:
     que são retornada no final do scan para serem printados no log da interface
     """
     def scannear(self):
-        portas_abertas = []
+        threads = []
         print(f"iniciando scan em {self.target} ({self.portaInicia}-{self.portaFinal})")
         """Função que realiza a conexão com o host e verifica se a porta está aberta"""
         for porta in range(self.portaInicia, self.portaFinal + 1):
-            tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            tcp.settimeout(0.3)
-            resultado = tcp.connect_ex((self.target, porta))
-            if resultado == 0:
-                try:
-                    servico = socket.getservbyport(porta)
-                except OSError:
-                    servico = "Desconhecido"
-                print("Porta aberta ", porta, servico)
-                portas_abertas.append((porta, servico))
-                tcp.close()
-        print("Scan acabou")
-        return portas_abertas
-    
+            scanear_unit = threading.Thread(target=self.scan_with_threads, args=(self.fila, porta))
+            scanear_unit.start()
+            threads.append(scanear_unit)
+
+        for thread in threads:
+            thread.join()
+
+
+
+    def scan_with_threads(self,fila , porta):
+        tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcp.settimeout(3)
+        resultado = tcp.connect_ex((self.target, porta))
+        if resultado == 0:
+            try:
+                servico = socket.getservbyport(porta)
+            except OSError:
+                servico = "Desconhecido"
+            fila.put(f"Porta {porta} aberta rodando {servico}")
+            tcp.close()
+
+    def limparfila(self):
+        return self.fila
     """ Metodos para definir valores"""
 
     """ metodo set_target, setando o alvo
@@ -61,4 +73,4 @@ class Scanner:
     """ método para retornar a porta final do scan"""
     def get_end_port(self):
         return self.portaFinal
-    
+   

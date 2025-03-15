@@ -1,5 +1,6 @@
+"""Banner usado para printar"""
 from colors import *
-VERSION=0.1
+VERSION=0.2
 def banner():
     print(RED + " \
     .s5SSSs. "+ GREEN + " .s5SSSs.  \n"+RED+"\

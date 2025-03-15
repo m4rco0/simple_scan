@@ -1,3 +1,4 @@
+#!/bin/python3
 import tkinter as tk
 from tkinter import  scrolledtext
 import scanner
@@ -11,13 +12,22 @@ import logging
 """
 class ScannApp:
    def __init__(self, root):
+      """ configurações iniciais da janela"""
       self.root = root
       self.root.title("Simplescan")
       self.root.geometry('1000x400')
       frame = tk.Frame(root)
-
       frame.pack(pady=5)
-      # criando os inputs
+      
+
+      """criação de todos os componentes usados na aplicação como:
+         input de alvo (txt_host)
+         label do ip (lbl_host)
+         area de informações das buscas (log_area)
+         butão para escanear (btn_scan)
+         input de portas (inp_int_port, inp_end_port)
+         label das portas (lbl_ports)
+         """
       self.lbl_host = tk.Label(frame, text="IP:")
       self.txt_host = tk.Entry(frame) 
       self.log_area = scrolledtext.ScrolledText(frame, width=60, height=10, state='disabled')
@@ -26,7 +36,7 @@ class ScannApp:
       self.inp_init_port = tk.Entry(frame)
       self.inp_end_port = tk.Entry(frame)
 
-
+      """ espaçamentos da interface grafica, estruturada usando grid, sendo cada linha e coluna um componten"""
       self.lbl_host.grid(row=0, column=0)
       self.txt_host.grid(row=0, column=1)
       self.btn_scan.grid(row=0, column=2)
@@ -35,9 +45,14 @@ class ScannApp:
       self.inp_init_port.grid(row=1, column=1)
       self.inp_end_port.grid(row=1, column=2)
 
+      """ Inicializando o scanner como nulo"""
       self.scanner = scanner.Scanner('0.0.0.0', 0, 0)
 
-   """metodo que inicia os threads do scan"""
+
+   """ =================Metodos=================
+   metodo que inicia os threads do scan
+   e testa se os inputs foram preenchidos
+   """
    def iniciar_scanner(self):
       target = self.txt_host.get().strip()
       init_port = self.inp_init_port.get().strip()
@@ -61,19 +76,23 @@ class ScannApp:
       thread = threading.Thread(target=self.executar_scan)
       thread.start()
 
+   """executar_scan recebe as listas das portas do scan e printa os resultados formatados"""
    def executar_scan(self):
 
-      portas_abertas = self.scanner.scannear()
-      if(portas_abertas == None):
-         self.log("Nenhuma porta encontrada!")
-         return
-      for porta, servico in portas_abertas:
-         self.log(f"Porta {porta} rodando {servico}\n")
+      self.scanner.scannear()
+      fila = self.scanner.limparfila()
 
+      while not fila.empty():
+         self.log(fila.get())
+         fila.task_done()
+
+
+   """log(mensagem) mostra as informação no componente log_area"""
    def log(self, mensagem):
       self.log_area.config(state='normal')
       self.log_area.insert(tk.END, mensagem + '\n')
       self.log_area.config(state='disabled')
+
 
 def main():
    root = tk.Tk()
