@@ -1,7 +1,10 @@
+#!/usr/bin/python3
 import socket
 import concurrent.futures
 from colors import *
 import queue
+
+import colors
 """ Construtor de um scanner"""
 class Scanner:
     def __init__(self, target, portaInicia, portaFinal, max_threads):
@@ -13,8 +16,7 @@ class Scanner:
 
     """ 
     função que executar o scan dos alvos até as portas determinadasd
-    percorre de porta_inicial até porta final de forma linear O(n)
-    e insere em uma tupla, com cada linha possuindo (porta, serviço)
+    percorre de porta_inicial até porta final de forma linear , com cada linha possuindo (porta, serviço)
     que são retornada no final do scan para serem printados no log da interface
     """
     def scannear(self):
@@ -35,7 +37,7 @@ class Scanner:
     def scan_with_threads(self,fila , porta):
         try:
             tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            tcp.settimeout(3)
+            tcp.settimeout(0.3)
             
             resultado = tcp.connect_ex((self.target, porta))
             if resultado == 0:
@@ -43,13 +45,14 @@ class Scanner:
                     servico = socket.getservbyport(porta)
                 except OSError:
                     servico = "Desconhecido"
-                fila.put(f"Porta {porta} aberta rodando {servico}")
-                tcp.close()
-        except socket.timeout :
-            self.fila.put(f"Porta {porta} filtrada rodando unknow")
+                fila.put(f"Porta {porta}" + colors.GREEN + " aberta " + colors.WHITE + F"rodando {servico}")
+            elif resultado == 110:
+                print(110, "filtrada")
+                fila.put(f"Porta {porta} filtrada (timeout)")
+            tcp.close()
         except socket.error as e:
             self.fila.put(f"Erro ao conectar com a porta {porta}: {e}")
-               
+
 
     def getfila(self):
         return self.fila
