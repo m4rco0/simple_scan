@@ -2,37 +2,85 @@
 import tkinter as tk
 from PIL import Image, ImageTk 
 import logging
-""" Classe ScannApp é oque engloba interface e o scanner e printa os resultados
-   root = é a interface root do tkinter
-   lbl_host = a lable para inserir o alvo do scan
-   log_area = area onde vai sair o resultado
-    __________
-   |__tittle__|
-   |    |     |
-   |  l |  r  |
-   |____|_____|
-   |__bottom__|
 
-"""
 class ScannApp:
    def __init__(self, root):
-      """ configurações iniciais da janela"""
       self.root = root
       self.root.title("Simplescan")
       self.root.geometry('942x801')
+      self.root.resizable(False,False)
+      
+      self._setup_colors()
+      self._setup_background()
+      self.root.configure()
+      self._create_widgets()
+      self.main_painel.pack()
 
-      self.BG_IMG = ImageTk.PhotoImage(Image.open("./src/ui/background.png"))
-      #------- cores utilizadas --------
+   def _setup_colors(self):
       self.BG_COLOR = "#232C25"
       self.INPUT_BORDER = "#575454"
       self.FG_COLOR = "#FFFFFF"
       self.FONT_LABEL = ("Consolas", 15)
       self.FONT_TITLE = ("Consolas", 22, "bold")
       self.WAVE_COLOR = "#011207"
+      self.WINDOW_WIDTH = 942
+      self.WINDOW_HEIGHT = 801 
 
-      background_label  = tk.Label(root, image=self.BG_IMG)
-      background_label.place(x=0, y=0, relwidth=1, relheight=1)
-      self.root.configure()
+   def _setup_background(self):
+      try:
+         self.BG_IMG = ImageTk.PhotoImage(Image.open("./ui/background.png"))
+         self.background_label  = tk.Label(self.root, image=self.BG_IMG)
+         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
+      except Exception as e:
+         print(f"Erro ao carregar imagem de fundo: {e}")
+         self.root.configure(bg="#232C25")
+
+   def _create_widgets(self):
+      self.tittle_lbl = tk.Label(self.root, text="Simplescan", font=self.FONT_TITLE, bg=self.BG_COLOR, fg=self.FG_COLOR)
+      self.tittle_lbl.pack()
+
+      self.main_painel = tk.Frame(self.root, bg=self.BG_COLOR, width=self.WINDOW_WIDTH, height=self.WINDOW_HEIGHT)
+      self.main_painel.columnconfigure(0, weight=1)
+      self.main_painel.columnconfigure(1, weight=1)
+      self.main_painel.rowconfigure(0, weight=1)
+      self.main_painel.rowconfigure(1, weight=1)
+
+      # ---------- criando paineis internos para receber inputs e mostrar resultados ---------------
+      self._setup_inputsPainel()
+      self._setup_resultsPainel()
+
+   def _setup_inputsPainel(self):
+      inputs_panel = tk.Frame(self.main_painel, width=443, height=469, bg=self.BG_COLOR)
+      inputs_panel.grid(row=0, column=0, padx=10, sticky=tk.NSEW)
+      inputs_panel.grid_columnconfigure(1, weight=1)
+      inputs_labels = ["ip:" , "Porta inicial:", "Porta final:", "Threads:"]
+      self.campos = {}
+      for i, text in enumerate(inputs_labels):
+         print(f"[+] Criando {i} lbl para '{text}'")
+         lbl = tk.Label(inputs_panel, text=text, bg=self.BG_COLOR, fg= self.FG_COLOR)
+         lbl.grid(row=i, column=0, sticky=tk.EW)
+
+         print(f"[+] Criando {i} entry para '{text}'")
+         campo = tk.Entry(inputs_panel, font=self.FONT_LABEL, bg=self.FG_COLOR, fg=self.WAVE_COLOR, relief="flat")
+         campo.grid(row=i, column=1, sticky=tk.EW, padx=5, pady=10)
+         self.campos[text] = campo
+
+      self.txt_host = self.campos["ip:"]
+      self.init_port = self.campos["Porta inicial:"]
+      self.final_port = self.campos["Porta final:"]
+      self.qts_threads = self.campos["Threads:"]
+
+   def _setup_resultsPainel(self):
+      resultado_panel = tk.Frame(self.main_painel, width=425, height=482, bg="red")
+      resultado_panel.grid(row=0, column=1, sticky=tk.NSEW, padx=(20, 20))
+      resultado_panel.grid_rowconfigure(1, weight=1)
+      resultado_panel.grid_columnconfigure(0, weight=1)
+      self._create_scan_btn()
+
+   def _create_scan_btn(self):
+      button_scan = tk.Button(self.main_painel, bg="yellow", text="Scannear!")
+      button_scan.grid(row=1, column=0, columnspan=2)
+
 
 def main():
    root = tk.Tk()
