@@ -45,7 +45,7 @@ class Scanner:
                     servico = socket.getservbyport(porta)
                 except OSError:
                     servico = "Desconhecido"
-                fila.put(f"Porta {porta}" + colors.GREEN + " aberta " + colors.WHITE + F"rodando {servico}")
+                fila.put(f"Porta {porta} aberta rodando {servico}")
             elif resultado == 110:
                 print(110, "filtrada")
                 fila.put(f"Porta {porta} filtrada (timeout)")

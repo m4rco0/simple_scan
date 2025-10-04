@@ -1,8 +1,9 @@
 #!/bin/python3
 import tkinter as tk
-from PIL import Image, ImageTk 
-import logging
-
+from tkinter import scrolledtext
+import scanner
+from PIL import Image, ImageTk
+import logging, threading
 class ScannApp:
    def __init__(self, root):
       self.root = root
@@ -15,6 +16,7 @@ class ScannApp:
       self.root.configure()
       self._create_widgets()
       self.main_painel.pack()
+      self.scanner = scanner.Scanner('0.0.0.0', 0, 0, 50) 
 
    def _setup_colors(self):
       """ Define as cores e fontes e tamanhos utilizado na applicação"""
@@ -85,14 +87,64 @@ class ScannApp:
       resultado_panel.grid(row=0, column=1, sticky=tk.NSEW, padx=(20, 20))
       resultado_panel.grid_rowconfigure(1, weight=1)
       resultado_panel.grid_columnconfigure(0, weight=1)
+
+      self.logArea = scrolledtext.ScrolledText(resultado_panel, width=60, height=30, state='disabled')
+      self.logArea.grid(row=1,column=0)
       self._create_scan_btn()
+
 
    def _create_scan_btn(self):
       """ cria o botão de scan"""
-      button_scan = tk.Button(self.main_painel, bg="yellow", text="Scannear!")
+      button_scan = tk.Button(self.main_painel, bg="yellow", text="Scannear!", command=self.iniciar_scan)
       button_scan.grid(row=1, column=0, columnspan=2)
 
+   def iniciar_scan(self):
+      alvo = self.txt_host.get().strip()
+      init_port = int(self.init_port.get())
+      final_port = int(self.final_port.get())
+      qts_threads = int(self.qts_threads.get().strip())
 
+      if not alvo:
+         self.log("Alvo do scan não foi inserido!")
+         return 
+      
+      if not (init_port or final_port):
+         self.log("Portas não foram setadas")
+         init_port = 0 
+         final_port = 100
+
+      if qts_threads <= 0:
+         self.log("Não pode threads negativo")
+         return 
+
+      self.log(f" [+] Iniciando scan {alvo} [{init_port}-{final_port}]")
+
+      self.scanner.set_target(alvo)
+      self.scanner.set_initial_port(init_port)
+      self.scanner.set_end_port(final_port)
+      self.scanner.set_qts_threads(qts_threads)
+
+      thread = threading.Thread(target=self.executar_scan)
+      thread.start()
+
+
+   def executar_scan(self):
+      self.scanner.scannear()
+      self.log(f"alvo {self.scanner.get_target()}:")
+      fila = self.scanner.getfila()
+      while not fila.empty():
+         self.log(fila.get())
+         fila.task_done()
+
+
+
+     
+
+
+   def log(self, mensagem):
+      self.logArea.config(state='normal')
+      self.logArea.insert(tk.END, mensagem + '\n')
+      self.logArea.config(state='disabled')
 def main():
    root = tk.Tk()
    logging.basicConfig(filename='myapp.log', level=logging.INFO)
