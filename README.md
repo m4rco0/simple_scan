@@ -24,5 +24,5 @@ Só precisa executar o codigo no src
 ```bash
 python3 simple_scan_ui.py 
 ```
-![Image](https://github.com/user-attachments/assets/b8b4ea0e-db4b-46d1-b123-431291cecaed)
+![Image](https://github.com/user-attachments/assets/a62b8d68-1bb1-4a22-b070-f04871d5ff5e)
 
