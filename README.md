@@ -7,9 +7,9 @@
 - [x] Alternativa grafica do scan
 
 ## Como usar
-Você pode usar a ferramenta de duas maneiras:
+Primeiro o programa necessita que o usuario esteja na pasta `src/`. Utilizando se das duas formas abaixo:
 ## Sem interface grafica
-### Executando o arquivo `main.py` com argumentos. 
+### Executando o arquivo `simple_scan.py` com argumentos. 
 
 Exemplo:
 ```bash
