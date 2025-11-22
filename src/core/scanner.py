@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 import socket
 import concurrent.futures
-from colors import *
 import queue
 
-import colors
+from src.core.banner_grapping import pegar_banner
+
 """ Construtor de um scanner"""
 class Scanner:
     def __init__(self, target, portaInicia, portaFinal, max_threads):
@@ -31,27 +31,25 @@ class Scanner:
                 try:
                     future.result()
                 except Exception as e:
-                    print(f"Erro escanear a prota {porta}: {e}")
+                    print(f"Erro escanear a porta {porta}: {e}")
 
 
     def scan_with_threads(self,fila , porta):
-        try:
             tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             tcp.settimeout(0.3)
-            
+            global banner
             resultado = tcp.connect_ex((self.target, porta))
             if resultado == 0:
                 try:
                     servico = socket.getservbyport(porta)
+                    banner = pegar_banner(self.target, porta)
                 except OSError:
                     servico = "Desconhecido"
-                fila.put(f"Porta {porta} aberta rodando {servico}")
+                fila.put(f"\t-Porta {porta} aberta rodando {servico}.\n\t\t*Banner = {banner}")
             elif resultado == 110:
                 print(110, "filtrada")
                 fila.put(f"Porta {porta} filtrada (timeout)")
             tcp.close()
-        except socket.error as e:
-            self.fila.put(f"Erro ao conectar com a porta {porta}: {e}")
 
 
     def getfila(self):

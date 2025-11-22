@@ -1,12 +1,13 @@
 #/usr/bin/python3
 import argparse
-from art import banner
-from colors import *
-import scanner
+from src.utils.colors import *
+from src.utils.art import banner
+from src.core.scanner import Scanner
+
 """ Programa versão CLI do simplescan, onde vai receber as configurações passadas por linha de comando exemplo:
     python3 ./simple_scan.py 127.0.0.1 -p 0-200
     """
-def main():
+def main(args=None):
     """ Configuração do cli do programa """
     parser = argparse.ArgumentParser(
                       prog="SimpleScan",
@@ -40,15 +41,10 @@ def main():
     if args.threads != None:
         threads = int(args.threads)
 
-    print(threads)
     """ utilizando o scanner"""
-    scan = scanner.Scanner(ip, startPort, endPort, threads)
+    scan = Scanner(ip, startPort, endPort, threads)
     scan.scannear()
     fila = scan.getfila()
-
     while not fila.empty():
         print(fila.get())
         fila.task_done()
-
-if __name__ == '__main__':
-    main()

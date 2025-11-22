@@ -1,9 +1,11 @@
 #!/bin/python3
 import tkinter as tk
+import tkinter.font as tkFont
 from tkinter import scrolledtext
-import scanner
+import threading
+import src.core.scanner as scanner
+from src.core.banner_grapping import pegar_banner
 from PIL import Image, ImageTk
-import logging, threading
 class ScannApp:
    def __init__(self, root):
       self.root = root
@@ -23,8 +25,8 @@ class ScannApp:
       self.BG_COLOR = "#232C25"
       self.INPUT_BORDER = "#575454"
       self.FG_COLOR = "#FFFFFF"
-      self.FONT_LABEL = ("Consolas", 15)
-      self.FONT_TITLE = ("Consolas", 22, "bold")
+      self.FONT_LABEL = tkFont.Font(family="Jaini", size= 16)
+      self.FONT_TITLE = tkFont.Font(family="Jaini", size= 22) 
       self.WAVE_COLOR = "#011207"
       self.WINDOW_WIDTH = 942
       self.WINDOW_HEIGHT = 801 
@@ -32,7 +34,7 @@ class ScannApp:
    def _create_background(self):
       """ cria que vai carregar a foto de fundo e colocar em uma label, caso não consiga, iniciará com apenas a cor de fundo"""
       try:
-         self.BG_IMG = ImageTk.PhotoImage(Image.open("./ui/background.png"))
+         self.BG_IMG = ImageTk.PhotoImage(Image.open("./src/assets/images/background.png"))
          self.background_label  = tk.Label(self.root, image=self.BG_IMG)
          self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
       except Exception as e:
@@ -67,7 +69,7 @@ class ScannApp:
       inputs_labels = ["ip:" , "Porta inicial:", "Porta final:", "Threads:"]
       self.campos = {}
       for i, text in enumerate(inputs_labels):
-         lbl = tk.Label(inputs_panel, text=text, bg=self.BG_COLOR, fg= self.FG_COLOR)
+         lbl = tk.Label(inputs_panel, text=text, bg=self.BG_COLOR, fg= self.FG_COLOR, font=self.FONT_LABEL)
          lbl.grid(row=i, column=0, sticky=tk.EW)
 
          # Cria campos para receber valores
@@ -95,8 +97,8 @@ class ScannApp:
 
    def _create_scan_btn(self):
       """ cria o botão de scan"""
-      button_scan = tk.Button(self.main_painel, bg="yellow", text="Scannear!", command=self.iniciar_scan)
-      button_scan.grid(row=1, column=0, columnspan=2)
+      button_scan = tk.Button(self.main_painel, font=self.FONT_LABEL,  text="Scannear!", command=self.iniciar_scan)
+      button_scan.grid(row=1, column=0, columnspan=2, pady=10)
 
    def iniciar_scan(self):
       alvo = self.txt_host.get().strip()
@@ -127,7 +129,6 @@ class ScannApp:
       thread = threading.Thread(target=self.executar_scan)
       thread.start()
 
-
    def executar_scan(self):
       self.scanner.scannear()
       self.log(f"alvo {self.scanner.get_target()}:")
@@ -147,11 +148,5 @@ class ScannApp:
       self.logArea.config(state='disabled')
 def main():
    root = tk.Tk()
-   logging.basicConfig(filename='myapp.log', level=logging.INFO)
-   logging.info('Start')
    app = ScannApp(root)
    root.mainloop()
-   logging.info('Finished')
-
-if __name__ == '__main__':
-   main()

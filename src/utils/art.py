@@ -1,5 +1,5 @@
 """Banner usado para printar"""
-from colors import *
+from src.utils.colors import *
 VERSION=0.2
 def banner():
     print(RED + " \
