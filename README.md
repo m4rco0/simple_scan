@@ -57,7 +57,16 @@ git clone https://github.com/m4rco0/simple_scan.git
 ```bash
 cd simple_scan
 ```
-3. Instale as dependências (se houver):
+3. Instale o tkinter:
+```bash
+#debian distros
+sudo apt install python3-tk
+#Red Hat distros
+sudo dnf install python3-tkinter
+#Arch distros
+sudo pacman -S tk
+```
+4. Instale as dependências (se houver):
 ```bash
 pip install -r requirements.txt
 ```
