@@ -36,20 +36,23 @@ class Scanner:
 
     def scan_with_threads(self,fila , porta):
             tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            tcp.settimeout(0.3)
-            global banner
-            resultado = tcp.connect_ex((self.target, porta))
-            if resultado == 0:
-                try:
-                    servico = socket.getservbyport(porta)
-                    banner = pegar_banner(self.target, porta)
-                except OSError:
-                    servico = "Desconhecido"
-                fila.put(f"\t-Porta {porta} aberta rodando {servico}.\n\t\t*Banner = {banner}")
-            elif resultado == 110:
-                print(110, "filtrada")
-                fila.put(f"Porta {porta} filtrada (timeout)")
-            tcp.close()
+            tcp.settimeout(1)
+
+            banner_local =  "Sem banner"
+
+            try:
+                resultado = tcp.connect_ex((self.target, porta))
+                if resultado == 0:
+                    try:
+                        servico = socket.getservbyport(porta)
+                        banner_local = pegar_banner(self.target, porta, servico)
+                    except (socket.error, OSError):
+                        servico = "Desconhecido"
+                    fila.put(f"\t-Porta {porta} aberta rodando {servico}.\n\t\t*Versão = {banner_local}")
+            except Exception as e:
+                fila.put(f"Erro inesperado na porta {porta}: {e}")
+            finally:
+                tcp.close()
 
 
     def getfila(self):

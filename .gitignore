@@ -3,6 +3,7 @@ test.py
 *.[oa]
 #Ambiente virtual
 venv
+.venv
 __pycache__
 *.log
 #IDEs
